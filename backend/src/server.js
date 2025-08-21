@@ -15,22 +15,22 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
-// middleware
-if (process.env.NODE_ENV !== "production") {
-  app.use(cors({
-    origin: ["http://localhost:5173", "http://192.168.10.5:5173"],
-  }));
-}
+// CORS middleware - allow requests from frontend
+app.use(cors({
+  origin: ["http://localhost:5173", "http://192.168.10.5:5173"],
+  credentials: true, // Allow credentials (cookies, authorization headers)
+}));
 
 app.use(express.json());
-app.use(rateLimiter);
 
+// Temporarily disable rate limiter for testing
+// app.use(rateLimiter);
 
-
-// app.use((req, res, next) => {
-//   console.log("We just got a new request: ", req.method);
-//   next();
-// });
+// Log all requests for debugging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`, req.body);
+  next();
+});
 
 app.use("/api/notes", notesRoutes);
 app.use("/user", userRoutes);
