@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 
 import notesRoutes from "./routes/notesRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
 import { connectDB } from "./config/db.js";
 
 import rateLimiter from "./middleware/rateLimiter.js";
@@ -15,25 +14,24 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
-// CORS middleware - allow requests from frontend
-app.use(cors({
-  origin: ["http://localhost:5173", "http://192.168.10.5:5173"],
-  credentials: true, // Allow credentials (cookies, authorization headers)
-}));
+// middleware
+if (process.env.NODE_ENV !== "production") {
+  app.use(cors({
+    origin: ["http://localhost:5173", "http://192.168.10.5:5173"],
+  }));
+}
 
 app.use(express.json());
+app.use(rateLimiter);
 
-// Temporarily disable rate limiter for testing
-// app.use(rateLimiter);
 
-// Log all requests for debugging
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`, req.body);
-  next();
-});
+
+// app.use((req, res, next) => {
+//   console.log("We just got a new request: ", req.method);
+//   next();
+// });
 
 app.use("/api/notes", notesRoutes);
-app.use("/user", userRoutes);
 
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
