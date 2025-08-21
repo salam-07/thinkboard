@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 
 import notesRoutes from "./routes/notesRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { connectDB } from "./config/db.js";
 
 import rateLimiter from "./middleware/rateLimiter.js";
@@ -32,6 +33,7 @@ app.use(rateLimiter);
 // });
 
 app.use("/api/notes", notesRoutes);
+app.use("/user", userRoutes);
 
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 

@@ -1,17 +1,22 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
-// TODO create scheme
-// model from scheme
-
+// Note schema with user association
 const noteSchema = new mongoose.Schema(
     {
         title: {
             type: String,
-            required: true,
+            required: [true, "Title is required"],
+            trim: true,
         },
         content: {
             type: String,
-            required: true,
+            required: [true, "Content is required"],
+        },
+        // Associate each note with a user
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User", // Reference to User model
+            required: [true, "User is required"],
         }
     },
     { timestamps: true }
